@@ -1,0 +1,109 @@
+const RAY_MAX_DISTANCE = 500;
+class Ray {
+    constructor(origin, direction) {
+        this.origin = origin;
+        this.direction = direction || createVector();
+    }
+    setDirectionPoint(lookAtPoint) {
+        this.direction = p5.Vector.sub(lookAtPoint, this.origin).normalize();
+    }
+    draw(walls) {
+        stroke('red');
+        strokeWeight(10);
+        point(this.origin.x, this.origin.y);
+        const end = this.calculateIntersectionPoint(walls);
+        strokeWeight(1);
+        stroke('white');
+        line(this.origin.x, this.origin.y, end.x, end.y);
+    }
+    calculateIntersectionPoint(walls) {
+        let intersectionPoint;
+        for (const wall of walls) {
+            const point = this.getRayToLineSegmentIntersection(wall);
+            if (!point)
+                continue;
+            const distance = p5.Vector.dist(this.origin, point);
+            if (!intersectionPoint || distance < intersectionPoint.distance) {
+                intersectionPoint = {
+                    distance,
+                    point
+                };
+            }
+        }
+        if (intersectionPoint) {
+            return intersectionPoint.point;
+        }
+        else {
+            return p5.Vector.add(this.origin, p5.Vector.mult(this.direction, RAY_MAX_DISTANCE));
+        }
+    }
+    getRayToLineSegmentIntersection(wall) {
+        const x1 = wall.p1.x;
+        const y1 = wall.p1.y;
+        const x2 = wall.p2.x;
+        const y2 = wall.p2.y;
+        const x3 = this.origin.x;
+        const y3 = this.origin.y;
+        const x4 = this.origin.x + this.direction.x;
+        const y4 = this.origin.y + this.direction.y;
+        const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+        if (den == 0) {
+            return null;
+        }
+        const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
+        const u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
+        if (t > 0 && t < 1 && u > 0) {
+            return createVector(x1 + t * (x2 - x1), y1 + t * (y2 - y1));
+        }
+        return null;
+    }
+}
+let font;
+let fps = 0;
+const walls = [];
+let ray;
+function preload() {
+    font = loadFont('assets/Inconsolata-Medium.ttf');
+}
+function setup() {
+    console.log("🚀 - Setup initialized - P5 is running");
+    createCanvas(500, 500, WEBGL);
+    walls.push(new Wall(createVector(100, 60), createVector(400, 100)));
+    walls.push(new Wall(createVector(200, 60), createVector(60, 100)));
+    ray = new Ray(createVector(300, 300));
+    textFont(font);
+    textSize(32);
+}
+function draw() {
+    background('black');
+    translate(-width / 2, -height / 2);
+    drawFPS();
+    ray.setDirectionPoint(createVector(mouseX, mouseY));
+    drawWalls();
+    ray.draw(walls);
+}
+function drawFPS() {
+    if (frameCount % 5 === 0)
+        fps = floor(frameRate());
+    fill('white');
+    textAlign(LEFT, TOP);
+    text(fps, 5, 5);
+}
+function drawWalls() {
+    stroke('white');
+    walls.forEach(wall => {
+        wall.draw();
+    });
+}
+class Wall {
+    constructor(p1, p2) {
+        this.p1 = p1;
+        this.p2 = p2;
+    }
+    draw() {
+        stroke(10, 10, 235);
+        strokeWeight(5);
+        line(this.p1.x, this.p1.y, this.p2.x, this.p2.y);
+    }
+}
+//# sourceMappingURL=build.js.map

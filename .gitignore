@@ -1,5 +1,8 @@
 node_modules/
 .vscode/
-**/*.js
-**/*.js.map
-build/
+sketch/
+package*.json
+bun.lockb
+README.md
+tsconfig.json
+global.d.ts
