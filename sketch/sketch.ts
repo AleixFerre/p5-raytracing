@@ -17,6 +17,10 @@ function setup() {
     createVector(100, 60),
     createVector(400, 100),
   ))
+  walls.push(new Wall(
+    createVector(200, 60),
+    createVector(500, 100),
+  ))
 
   ray = new Ray(
     createVector(300, 300),

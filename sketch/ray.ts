@@ -1,5 +1,10 @@
 const RAY_MAX_DISTANCE = 500;
 
+interface IntersectionPointInfo {
+  point: p5.Vector;
+  distance: number;
+}
+
 class Ray {
   origin: p5.Vector;
   direction: p5.Vector;
@@ -25,8 +30,25 @@ class Ray {
   }
 
   private calculateIntersectionPoint(walls: Wall[]): p5.Vector {
-    const intersectionPoint = this.getRayToLineSegmentIntersection(walls[0]);
-    return intersectionPoint || p5.Vector.add(this.origin, p5.Vector.mult(this.direction, RAY_MAX_DISTANCE));
+    let intersectionPoint: IntersectionPointInfo;
+    for (const wall of walls) {
+      const point = this.getRayToLineSegmentIntersection(wall);
+      if (!point) continue;
+
+      const distance = p5.Vector.dist(this.origin, point);
+      if (!intersectionPoint || distance < intersectionPoint.distance) {
+        intersectionPoint = {
+          distance,
+          point
+        };
+      }
+    }
+
+    if (intersectionPoint) {
+      return intersectionPoint.point;
+    } else {
+      return p5.Vector.add(this.origin, p5.Vector.mult(this.direction, RAY_MAX_DISTANCE));
+    }
   }
 
   private getRayToLineSegmentIntersection(wall: Wall): p5.Vector | null {
