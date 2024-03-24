@@ -1,6 +1,9 @@
 let font: p5.Font;
 
+let fps = 0;
+
 const walls: Wall[] = [];
+let ray: Ray;
 
 function preload() {
   font = loadFont('assets/Inconsolata-Medium.ttf');
@@ -15,7 +18,9 @@ function setup() {
     createVector(400, 100),
   ))
 
-  console.log(walls);
+  ray = new Ray(
+    createVector(300, 300),
+  )
 
   textFont(font);
   textSize(32);
@@ -24,14 +29,21 @@ function setup() {
 function draw() {
   background('black');
   translate(-width / 2, -height / 2);
+  drawFPS();
+
+  ray.setDirectionPoint(createVector(mouseX, mouseY));
+
+  drawWalls();
+  ray.draw(walls);
+}
+
+function drawFPS() {
+  if (frameCount % 5 === 0)
+    fps = floor(frameRate());
 
   fill('white');
   textAlign(LEFT, TOP);
-  text(floor(frameRate()), 5, 5);
-
-  textAlign(RIGHT, TOP);
-
-  drawWalls();
+  text(fps, 5, 5);
 }
 
 function drawWalls() {

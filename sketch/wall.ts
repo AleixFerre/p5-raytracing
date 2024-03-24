@@ -8,6 +8,8 @@ class Wall {
   }
 
   draw() {
+    stroke(10, 10, 235);
+    strokeWeight(5);
     line(this.p1.x, this.p1.y, this.p2.x, this.p2.y);
   }
 }
