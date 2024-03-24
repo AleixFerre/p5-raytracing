@@ -1,4 +1,4 @@
 
-# P5 Sand Simulator
+# P5 Ray tracing
 
-Sand Simulator based on [this project](https://github.com/Gaweph/p5-typescript-starter)
+Ray tracing in p5 demo
