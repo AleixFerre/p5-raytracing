@@ -14,16 +14,27 @@ function setup() {
   createCanvas(800, 800, WEBGL);
 
   walls.push(new Wall(
-    createVector(100, 60),
-    createVector(400, 100)
+    createVector(600, 400),
+    createVector(400, 600)
   ));
+
   walls.push(new Wall(
-    createVector(200, 60),
-    createVector(60, 100)
+    createVector(200, 400),
+    createVector(400, 600)
+  ));
+
+  walls.push(new Wall(
+    createVector(200, 400),
+    createVector(400, 200)
+  ));
+
+  walls.push(new Wall(
+    createVector(400, 200),
+    createVector(600, 400)
   ));
 
   ray = new Ray(
-    createVector(300, 300),
+    createVector(400.1, 400.1),
   )
 
   textFont(font);
