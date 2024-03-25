@@ -2,8 +2,10 @@ let font: p5.Font;
 
 let fps = 0;
 
+const AMOUNT_OF_RAYS = 40;
+
 const walls: Wall[] = [];
-let ray: Ray;
+const rays: Ray[] = [];
 
 function preload() {
   font = loadFont('assets/Inconsolata-Medium.ttf');
@@ -13,6 +15,14 @@ function setup() {
   console.log("🚀 - Setup initialized - P5 is running");
   createCanvas(800, 800, WEBGL);
 
+  buildWalls();
+  buildRays();
+
+  textFont(font);
+  textSize(32);
+}
+
+function buildWalls() {
   walls.push(new Wall(
     createVector(600, 400),
     createVector(400, 600)
@@ -32,13 +42,16 @@ function setup() {
     createVector(400, 200),
     createVector(600, 400)
   ));
+}
 
-  ray = new Ray(
-    createVector(400.1, 400.1),
-  )
-
-  textFont(font);
-  textSize(32);
+function buildRays() {
+  for (let angle = 0; angle < TAU; angle += TAU / AMOUNT_OF_RAYS) {
+    const newRay = new Ray(
+      createVector(400.1, 400.1)
+    )
+    newRay.setDirectionFromAngle(angle);
+    rays.push(newRay);
+  }
 }
 
 function draw() {
@@ -46,10 +59,13 @@ function draw() {
   translate(-width / 2, -height / 2);
   drawFPS();
 
-  ray.setDirectionPoint(createVector(mouseX, mouseY));
-
   drawWalls();
-  ray.draw(walls);
+
+  for (let i = 0; i < rays.length; i++) {
+    const ray = rays[i];
+    ray.setDirectionFromAngle(TAU / rays.length * i + frameCount / 1000);
+    ray.draw(walls);
+  }
 }
 
 function drawFPS() {

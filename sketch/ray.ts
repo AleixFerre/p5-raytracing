@@ -1,5 +1,5 @@
 const RAY_MAX_DISTANCE = 1200;
-const RAY_MAX_BOUNCES = 5;
+const RAY_MAX_BOUNCES = 1;
 
 interface IntersectionPointInfo {
   point: p5.Vector;
@@ -18,6 +18,10 @@ class Ray {
 
   setDirectionPoint(lookAtPoint: p5.Vector) {
     this.direction = p5.Vector.sub(lookAtPoint, this.origin).normalize();
+  }
+
+  setDirectionFromAngle(angle: number) {
+    this.direction = p5.Vector.fromAngle(angle);
   }
 
   draw(walls: Wall[], depth: number = 0) {
