@@ -64,9 +64,6 @@ class Ray {
   }
 
   private getReflectionDirection(direction: p5.Vector, wall: Wall): p5.Vector {
-    // TODO: Sometimes this reflection direction returns the same direction as the original
-    // This makes no sense, hence this is a raw implementation of the law of reflection
-    // We need to investigate further on this
     const wallNormal = createVector(wall.p2.y - wall.p1.y, wall.p1.x - wall.p2.x).normalize();
     return p5.Vector.sub(direction, p5.Vector.mult(wallNormal, 2 * p5.Vector.dot(direction, wallNormal))).normalize();
   }
@@ -91,7 +88,7 @@ class Ray {
     const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
     const u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
 
-    if (t > 0 && t < 1 && u > 0) {
+    if (t > 0 && t < 1 && u > 0.0001) {
       return createVector(x1 + t * (x2 - x1), y1 + t * (y2 - y1));
     }
 
