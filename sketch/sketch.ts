@@ -4,8 +4,8 @@ let fps = 0;
 
 const AMOUNT_OF_RAYS = 40;
 
-const walls: Wall[] = [];
-const rays: Ray[] = [];
+const walls: Custom.Wall[] = [];
+const rays: Custom.Ray[] = [];
 
 function preload() {
   font = loadFont('assets/Inconsolata-Medium.ttf');
@@ -23,22 +23,22 @@ function setup() {
 }
 
 function buildWalls() {
-  walls.push(new Wall(
+  walls.push(new Custom.Wall(
     createVector(600, 400),
     createVector(400, 600)
   ));
 
-  walls.push(new Wall(
+  walls.push(new Custom.Wall(
     createVector(200, 400),
     createVector(400, 600)
   ));
 
-  walls.push(new Wall(
+  walls.push(new Custom.Wall(
     createVector(200, 400),
     createVector(400, 200)
   ));
 
-  walls.push(new Wall(
+  walls.push(new Custom.Wall(
     createVector(400, 200),
     createVector(600, 400)
   ));
@@ -46,7 +46,7 @@ function buildWalls() {
 
 function buildRays() {
   for (let angle = 0; angle < TAU; angle += TAU / AMOUNT_OF_RAYS) {
-    const newRay = new Ray(
+    const newRay = new Custom.Ray(
       createVector(400.1, 400.1)
     )
     newRay.setDirectionFromAngle(angle);
