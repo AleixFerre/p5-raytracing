@@ -1,20 +1,24 @@
-const RAY_MAX_DISTANCE = 500;
+const RAY_MAX_DISTANCE = 1200;
+const RAY_MAX_BOUNCES = 5;
 class Ray {
     constructor(origin, direction) {
         this.origin = origin;
-        this.direction = direction || createVector();
+        this.direction = (direction === null || direction === void 0 ? void 0 : direction.normalize()) || createVector();
     }
     setDirectionPoint(lookAtPoint) {
         this.direction = p5.Vector.sub(lookAtPoint, this.origin).normalize();
     }
-    draw(walls) {
+    draw(walls, depth = 0) {
         stroke('red');
         strokeWeight(10);
         point(this.origin.x, this.origin.y);
         const end = this.calculateIntersectionPoint(walls);
         strokeWeight(1);
         stroke('white');
-        line(this.origin.x, this.origin.y, end.x, end.y);
+        line(this.origin.x, this.origin.y, end.point.x, end.point.y);
+        if ((end === null || end === void 0 ? void 0 : end.reflection) && depth < RAY_MAX_BOUNCES) {
+            end.reflection.draw(walls, depth + 1);
+        }
     }
     calculateIntersectionPoint(walls) {
         let intersectionPoint;
@@ -23,19 +27,27 @@ class Ray {
             if (!point)
                 continue;
             const distance = p5.Vector.dist(this.origin, point);
+            const reflection = new Ray(point, this.getReflectionDirection(this.direction, wall));
             if (!intersectionPoint || distance < intersectionPoint.distance) {
                 intersectionPoint = {
                     distance,
-                    point
+                    point,
+                    reflection
                 };
             }
         }
-        if (intersectionPoint) {
-            return intersectionPoint.point;
-        }
-        else {
-            return p5.Vector.add(this.origin, p5.Vector.mult(this.direction, RAY_MAX_DISTANCE));
-        }
+        return intersectionPoint !== null && intersectionPoint !== void 0 ? intersectionPoint : this.getLineToInfinity();
+    }
+    getLineToInfinity() {
+        return {
+            point: p5.Vector.add(this.origin, p5.Vector.mult(this.direction, RAY_MAX_DISTANCE)),
+            distance: Infinity,
+            reflection: null
+        };
+    }
+    getReflectionDirection(direction, wall) {
+        const wallNormal = createVector(wall.p2.y - wall.p1.y, wall.p1.x - wall.p2.x).normalize();
+        return p5.Vector.sub(direction, p5.Vector.mult(wallNormal, 2 * p5.Vector.dot(direction, wallNormal))).normalize();
     }
     getRayToLineSegmentIntersection(wall) {
         const x1 = wall.p1.x;
@@ -67,7 +79,7 @@ function preload() {
 }
 function setup() {
     console.log("🚀 - Setup initialized - P5 is running");
-    createCanvas(500, 500, WEBGL);
+    createCanvas(800, 800, WEBGL);
     walls.push(new Wall(createVector(100, 60), createVector(400, 100)));
     walls.push(new Wall(createVector(200, 60), createVector(60, 100)));
     ray = new Ray(createVector(300, 300));
