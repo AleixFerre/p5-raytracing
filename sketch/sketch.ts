@@ -11,16 +11,16 @@ function preload() {
 
 function setup() {
   console.log("🚀 - Setup initialized - P5 is running");
-  createCanvas(500, 500, WEBGL);
+  createCanvas(800, 800, WEBGL);
 
   walls.push(new Wall(
     createVector(100, 60),
-    createVector(400, 100),
-  ))
+    createVector(400, 100)
+  ));
   walls.push(new Wall(
     createVector(200, 60),
-    createVector(500, 100),
-  ))
+    createVector(60, 100)
+  ));
 
   ray = new Ray(
     createVector(300, 300),

@@ -1,8 +1,10 @@
-const RAY_MAX_DISTANCE = 500;
+const RAY_MAX_DISTANCE = 1200;
+const RAY_MAX_BOUNCES = 5;
 
 interface IntersectionPointInfo {
   point: p5.Vector;
   distance: number;
+  reflection: Ray;
 }
 
 class Ray {
@@ -11,44 +13,62 @@ class Ray {
 
   constructor(origin: p5.Vector, direction?: p5.Vector) {
     this.origin = origin;
-    this.direction = direction || createVector();
+    this.direction = direction?.normalize() || createVector();
   }
 
   setDirectionPoint(lookAtPoint: p5.Vector) {
     this.direction = p5.Vector.sub(lookAtPoint, this.origin).normalize();
   }
 
-  draw(walls: Wall[]) {
+  draw(walls: Wall[], depth: number = 0) {
     stroke('red');
     strokeWeight(10);
     point(this.origin.x, this.origin.y);
 
-    const end: p5.Vector = this.calculateIntersectionPoint(walls);
+    const end: IntersectionPointInfo = this.calculateIntersectionPoint(walls);
     strokeWeight(1);
     stroke('white');
-    line(this.origin.x, this.origin.y, end.x, end.y);
+    line(this.origin.x, this.origin.y, end.point.x, end.point.y);
+
+    if (end?.reflection && depth < RAY_MAX_BOUNCES) {
+      end.reflection.draw(walls, depth + 1);
+    }
   }
 
-  private calculateIntersectionPoint(walls: Wall[]): p5.Vector {
+  private calculateIntersectionPoint(walls: Wall[]): IntersectionPointInfo {
     let intersectionPoint: IntersectionPointInfo;
     for (const wall of walls) {
       const point = this.getRayToLineSegmentIntersection(wall);
       if (!point) continue;
 
       const distance = p5.Vector.dist(this.origin, point);
+      const reflection = new Ray(point, this.getReflectionDirection(this.direction, wall));
+
       if (!intersectionPoint || distance < intersectionPoint.distance) {
         intersectionPoint = {
           distance,
-          point
+          point,
+          reflection
         };
       }
     }
+    return intersectionPoint ?? this.getLineToInfinity();
+  }
 
-    if (intersectionPoint) {
-      return intersectionPoint.point;
-    } else {
-      return p5.Vector.add(this.origin, p5.Vector.mult(this.direction, RAY_MAX_DISTANCE));
+  private getLineToInfinity(): IntersectionPointInfo {
+    return {
+      point: p5.Vector.add(this.origin, p5.Vector.mult(this.direction, RAY_MAX_DISTANCE)),
+      distance: Infinity,
+      reflection: null
     }
+  }
+
+  private getReflectionDirection(direction: p5.Vector, wall: Wall): p5.Vector {
+    // TODO: Sometimes this reflection direction returns the same direction as the original
+    // This makes no sense, hence this is a raw implementation of the law of reflection
+    // We need to investigate further on this
+    const wallNormal = createVector(wall.p2.y - wall.p1.y, wall.p1.x - wall.p2.x).normalize();
+    return p5.Vector.sub(direction, p5.Vector.mult(wallNormal, 2 * p5.Vector.dot(direction, wallNormal))).normalize();
   }
 
   private getRayToLineSegmentIntersection(wall: Wall): p5.Vector | null {
