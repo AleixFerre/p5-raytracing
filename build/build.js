@@ -64,7 +64,7 @@ class Ray {
         }
         const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
         const u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
-        if (t > 0 && t < 1 && u > 0) {
+        if (t >= 0 && t <= 1 && u > 0.0000001) {
             return createVector(x1 + t * (x2 - x1), y1 + t * (y2 - y1));
         }
         return null;
@@ -80,9 +80,11 @@ function preload() {
 function setup() {
     console.log("🚀 - Setup initialized - P5 is running");
     createCanvas(800, 800, WEBGL);
-    walls.push(new Wall(createVector(100, 60), createVector(400, 100)));
-    walls.push(new Wall(createVector(200, 60), createVector(60, 100)));
-    ray = new Ray(createVector(300, 300));
+    walls.push(new Wall(createVector(600, 400), createVector(400, 600)));
+    walls.push(new Wall(createVector(200, 400), createVector(400, 600)));
+    walls.push(new Wall(createVector(200, 400), createVector(400, 200)));
+    walls.push(new Wall(createVector(400, 200), createVector(600, 400)));
+    ray = new Ray(createVector(400.1, 400.1));
     textFont(font);
     textSize(32);
 }
