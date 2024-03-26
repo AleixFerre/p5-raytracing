@@ -34,7 +34,7 @@ namespace Custom {
       stroke("white");
       line(this.origin.x, this.origin.y, end.point.x, end.point.y);
 
-      if (end?.reflection && depth < AMOUNT_OF_BOUNCES) {
+      if (end?.reflection && depth < raysBouncesInfo.slider.value()) {
         end.reflection.draw(segments, depth + 1);
       }
     }
