@@ -21,25 +21,24 @@ namespace Custom {
     }
 
     setDirectionFromAngle(angle: number) {
-      
       this.direction = p5.Vector.fromAngle(angle);
     }
 
     draw(segments: Custom.Segment[], depth: number = 0) {
-      // stroke('red');
-      // strokeWeight(10);
-      // point(this.origin.x, this.origin.y);
+      stroke('red');
+      strokeWeight(10);
+      point(this.origin.x, this.origin.y);
 
       const end: IntersectionPointInfo = this.calculateIntersectionPoint(segments);
       strokeWeight(1);
-      stroke('white');
+      stroke("white");
       line(this.origin.x, this.origin.y, end.point.x, end.point.y);
 
       if (end?.reflection && depth < AMOUNT_OF_BOUNCES) {
         end.reflection.draw(segments, depth + 1);
       }
     }
-    
+
     private calculateIntersectionPoint(segments: Custom.Segment[]): IntersectionPointInfo {
       let intersectionPoint: IntersectionPointInfo;
       for (const segment of segments) {
@@ -53,7 +52,7 @@ namespace Custom {
           intersectionPoint = {
             distance,
             point,
-            reflection
+            reflection,
           };
         }
       }
@@ -65,8 +64,8 @@ namespace Custom {
       return {
         point: p5.Vector.add(this.origin, movement),
         distance: Infinity,
-        reflection: null
-      }
+        reflection: null,
+      };
     }
   }
 }

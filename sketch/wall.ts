@@ -13,14 +13,13 @@ namespace Custom {
       this.wallNormal = createVector(this.p2.y - this.p1.y, this.p1.x - this.p2.x).normalize();
     }
 
-    override draw():void {
+    override draw(): void {
       stroke(10, 10, 235);
       strokeWeight(5);
       line(this.p1.x, this.p1.y, this.p2.x, this.p2.y);
     }
 
-    override intersection(ray:Ray):p5.Vector | null {
-
+    override intersection(ray: Ray): p5.Vector | null {
       const x1 = this.p1.x;
       const y1 = this.p1.y;
       const x2 = this.p2.x;
@@ -36,7 +35,7 @@ namespace Custom {
       const y12 = y1 - y2;
       const x34 = x3 - x4;
 
-      const den = (x12) * (y34) - (y12) * (x34);
+      const den = x12 * y34 - y12 * x34;
 
       if (den == 0) {
         return null;
@@ -45,8 +44,8 @@ namespace Custom {
       const y13 = y1 - y3;
       const x13 = x1 - x3;
 
-      const t = ((x13) * (y34) - (y13) * (x34)) / den;
-      const u = -((x12) * (y13) - (y12) * (x13)) / den;
+      const t = (x13 * y34 - y13 * x34) / den;
+      const u = -(x12 * y13 - y12 * x13) / den;
 
       if (t >= 0 && t <= 1 && u > 0) {
         return createVector(x1 + t * (x2 - x1), y1 + t * (y2 - y1));
@@ -55,7 +54,7 @@ namespace Custom {
       return null;
     }
 
-    override reflection(ray:Ray):p5.Vector | null {
+    override reflection(ray: Ray): p5.Vector | null {
       const movement = this.wallNormal.copy().mult(2 * p5.Vector.dot(ray.direction, this.wallNormal));
       return p5.Vector.sub(ray.direction, movement).normalize();
     }
