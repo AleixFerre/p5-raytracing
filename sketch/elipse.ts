@@ -5,19 +5,22 @@ namespace Custom {
     center: p5.Vector;
     width: number;
     height: number;
+    half: number; // 1 = dreta or -1 = esquerra
 
-    constructor(center: p5.Vector, width: number, height: number) {
+    constructor(center: p5.Vector, width: number, height: number, half:number) {
       super();
       this.center = center;
       this.width = width;
       this.height = height;
+      this.half = half;
     }
 
     override draw(): void {
       stroke(10, 10, 235);
       strokeWeight(5);
       noFill();
-      ellipse(this.center.x, this.center.y, this.width, this.height, 50)
+      const plus = this.half>0?PI:0
+      arc(this.center.x, this.center.y, this.width, this.height,PI/2+plus,PI+PI/2+plus,OPEN, 50)
     }
 
     override intersection(ray: Ray): p5.Vector | null {
@@ -37,35 +40,37 @@ namespace Custom {
       
       const discriminant = B * B - 4 * A * C;
       
-      if (discriminant === 0) {
-          const t = -B / (2 * A);
-          if (t >= 0) {
-              const x = ray.origin.x + t * xd;
-              const y = ray.origin.y + t * yd;
-              return createVector(x,y);
+      if (discriminant > 0) {
+        const ssq = sqrt(discriminant)
+        const t1 = (-B + ssq) / (2 * A);
+        const t2 = (-B - ssq) / (2 * A);
+        if(t1 >= 0 && t2 >= 0){ // Outside case
+          const x1 = ray.origin.x + t1 * xd;
+          const y1 = ray.origin.y + t1 * yd;
+          const aA = createVector(x1,y1); // Far
+          const x2 = ray.origin.x + t2 * xd;
+          const y2 = ray.origin.y + t2 * yd;
+          const bB = createVector(x2,y2); // Close
+
+          let toReturn = bB;
+          if(((this.half > 0 && x2 < this.center.x) 
+          || (this.half < 0 && x2 > this.center.x))){
+            toReturn = aA;
+            if(((this.half > 0 && x1 < this.center.x) 
+            || (this.half < 0 && x1 > this.center.x))){
+              toReturn = null;
+            }
           }
-      } else if (discriminant > 0) {
-          const t1 = (-B + sqrt(discriminant)) / (2 * A);
-          const t2 = (-B - sqrt(discriminant)) / (2 * A);
-          if(t1 >= 0 && t2 >= 0){
-            const x1 = ray.origin.x + t1 * xd;
-            const y1 = ray.origin.y + t1 * yd;
-            const aA =  createVector(x1,y1);
-            const x2 = ray.origin.x + t2 * xd;
-            const y2 = ray.origin.y + t2 * yd;
-            const bB = createVector(x2,y2);
-            return aA.dist(ray.origin) < bB.dist(ray.origin) ? aA : bB;
-          }
-          if (t1 >= 0) {
-              const x1 = ray.origin.x + t1 * xd;
-              const y1 = ray.origin.y + t1 * yd;
-              return createVector(x1,y1);
-          }
-          if (t2 >= 0) {
-              const x2 = ray.origin.x + t2 * xd;
-              const y2 = ray.origin.y + t2 * yd;
-              return createVector(x2,y2);
-          }
+
+          return toReturn;
+        }
+        const x1 = ray.origin.x + t1 * xd;
+        if (t1 >= 0 && 
+            ((this.half > 0 && x1 > this.center.x) 
+          || (this.half < 0 && x1 < this.center.x))) { // Inside case
+          const y1 = ray.origin.y + t1 * yd;
+            return createVector(x1,y1);
+        }
       }
 
       return null;

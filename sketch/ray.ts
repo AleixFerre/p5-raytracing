@@ -21,14 +21,14 @@ namespace Custom {
     }
 
     setDirectionFromAngle(angle: number) {
-      console.log(angle);
+      
       this.direction = p5.Vector.fromAngle(angle);
     }
 
     draw(segments: Custom.Segment[], depth: number = 0) {
-      stroke('red');
-      strokeWeight(10);
-      point(this.origin.x, this.origin.y);
+      // stroke('red');
+      // strokeWeight(10);
+      // point(this.origin.x, this.origin.y);
 
       const end: IntersectionPointInfo = this.calculateIntersectionPoint(segments);
       strokeWeight(1);
