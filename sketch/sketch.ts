@@ -2,9 +2,11 @@ let font: p5.Font;
 
 let fps = 0;
 
-const AMOUNT_OF_RAYS = 40;
+const AMOUNT_OF_RAYS = 16;
+const AMOUNT_OF_BOUNCES = 10;
+const SPEED = 100;
 
-const walls: Custom.Wall[] = [];
+const segments: Custom.Segment[] = [];
 const rays: Custom.Ray[] = [];
 
 function preload() {
@@ -23,31 +25,38 @@ function setup() {
 }
 
 function buildWalls() {
-  walls.push(new Custom.Wall(
-    createVector(600, 400),
-    createVector(400, 600)
-  ));
 
-  walls.push(new Custom.Wall(
-    createVector(200, 400),
-    createVector(400, 600)
-  ));
+  segments.push(new Custom.Elipse(
+      createVector(400, 400),
+      600,
+      600
+    ));
 
-  walls.push(new Custom.Wall(
-    createVector(200, 400),
-    createVector(400, 200)
-  ));
+  // segments.push(new Custom.Wall(
+  //   createVector(600, 400),
+  //   createVector(400, 600)
+  // ));
 
-  walls.push(new Custom.Wall(
-    createVector(400, 200),
-    createVector(600, 400)
-  ));
+  // segments.push(new Custom.Wall(
+  //   createVector(200, 400),
+  //   createVector(400, 600)
+  // ));
+
+  // segments.push(new Custom.Wall(
+  //   createVector(200, 400),
+  //   createVector(400, 200)
+  // ));
+
+  // segments.push(new Custom.Wall(
+  //   createVector(400, 200),
+  //   createVector(600, 400)
+  // ));
 }
 
 function buildRays() {
   for (let angle = 0; angle < TAU; angle += TAU / AMOUNT_OF_RAYS) {
     const newRay = new Custom.Ray(
-      createVector(400.1, 400.1)
+      createVector(200.1, 400.1)
     )
     newRay.setDirectionFromAngle(angle);
     rays.push(newRay);
@@ -63,8 +72,8 @@ function draw() {
 
   for (let i = 0; i < rays.length; i++) {
     const ray = rays[i];
-    ray.setDirectionFromAngle(TAU / rays.length * i + frameCount / 1000);
-    ray.draw(walls);
+    ray.setDirectionFromAngle(TAU / rays.length * i + frameCount / 100000 * SPEED);
+    ray.draw(segments);
   }
 }
 
@@ -79,7 +88,7 @@ function drawFPS() {
 
 function drawWalls() {
   stroke('white')
-  walls.forEach(wall => {
+  segments.forEach(wall => {
     wall.draw();
   });
 }

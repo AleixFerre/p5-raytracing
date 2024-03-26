@@ -1,6 +1,7 @@
 namespace Custom {
-  export class Segment {
-    constructor() {}
-    draw() {}
+  export abstract class Segment {
+    abstract draw():void 
+    abstract intersection(ray:Ray):p5.Vector | null
+    abstract reflection(ray:Ray):p5.Vector | null
   }
 }
