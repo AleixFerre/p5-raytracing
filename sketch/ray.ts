@@ -25,14 +25,14 @@ namespace Custom {
     }
 
     draw(segments: Custom.Segment[], depth: number = 0) {
-      stroke('red');
-      strokeWeight(10);
-      point(this.origin.x, this.origin.y);
+      img.stroke('red');
+      img.strokeWeight(10);
+      img.point(this.origin.x, this.origin.y);
 
       const end: IntersectionPointInfo = this.calculateIntersectionPoint(segments);
-      strokeWeight(1);
-      stroke("white");
-      line(this.origin.x, this.origin.y, end.point.x, end.point.y);
+      img.strokeWeight(1);
+      img.stroke("white");
+      img.line(this.origin.x, this.origin.y, end.point.x, end.point.y);
 
       if (end?.reflection && depth < raysBouncesInfo.slider.value()) {
         end.reflection.draw(segments, depth + 1);

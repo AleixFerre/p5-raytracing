@@ -16,11 +16,11 @@ namespace Custom {
     }
 
     override draw(): void {
-      stroke(10, 10, 235);
-      strokeWeight(5);
-      noFill();
+      img.stroke(10, 10, 235);
+      img.strokeWeight(5);
+      img.noFill();
       const plus = this.half > 0 ? PI : 0;
-      arc(this.center.x, this.center.y, this.width, this.height, PI / 2 + plus, PI + PI / 2 + plus, OPEN, 50);
+      img.arc(this.center.x, this.center.y, this.width, this.height, PI / 2 + plus, PI + PI / 2 + plus, OPEN, 50);
     }
 
     override intersection(ray: Ray): p5.Vector | null {

@@ -14,9 +14,9 @@ namespace Custom {
     }
 
     override draw(): void {
-      stroke(10, 10, 235);
-      strokeWeight(5);
-      line(this.p1.x, this.p1.y, this.p2.x, this.p2.y);
+      img.stroke(10, 10, 235);
+      img.strokeWeight(5);
+      img.line(this.p1.x, this.p1.y, this.p2.x, this.p2.y);
     }
 
     override intersection(ray: Ray): p5.Vector | null {
